@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api/client'
 import ServiceCard from '../components/ServiceCard'
 
+// Каталог получает категории и услуги через API и выполняет пользовательскую фильтрацию.
 export default function Catalog() {
   const [services, setServices] = useState([])
   const [categories, setCategories] = useState([])
@@ -30,16 +31,16 @@ export default function Catalog() {
   useEffect(() => { loadCatalog() }, [])
 
   const filtered = useMemo(() => services.filter((service) => {
-    const byCategory = selectedCategories.length === 0 || selectedCategories.includes(String(service.category_id))
+    const byCategory = selectedCategories.length === 0 || selectedCategories.includes(service.category_name)
     const phrase = search.trim().toLocaleLowerCase('ru-RU')
     const bySearch = !phrase || `${service.name} ${service.description} ${service.category_name}`.toLocaleLowerCase('ru-RU').includes(phrase)
     return byCategory && bySearch
   }), [services, selectedCategories, search])
 
-  function toggleCategory(id) {
-    setSelectedCategories((current) => current.includes(String(id))
-      ? current.filter((value) => value !== String(id))
-      : [...current, String(id)])
+  function toggleCategory(name) {
+    setSelectedCategories((current) => current.includes(name)
+      ? current.filter((value) => value !== name)
+      : [...current, name])
   }
 
   return (
@@ -67,7 +68,7 @@ export default function Catalog() {
             <div className="aside-title"><h3>Категории</h3><button className="text-button" onClick={() => setSelectedCategories([])}>Сбросить</button></div>
             {categories.length ? categories.map((category) => (
               <label className="category-check" key={category.category_id}>
-                <input type="checkbox" checked={selectedCategories.includes(String(category.category_id))} onChange={() => toggleCategory(category.category_id)} />
+                <input type="checkbox" checked={selectedCategories.includes(category.name)} onChange={() => toggleCategory(category.name)} />
                 <span>{category.name}</span><small>{category.services_count}</small>
               </label>
             )) : <p className="muted">Категорий пока нет.</p>}

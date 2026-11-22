@@ -3,6 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (() => {
+        const key = 'service-store-theme';
+        let theme = 'light';
+
+        try {
+          const savedTheme = localStorage.getItem(key);
+          if (savedTheme === 'dark' || savedTheme === 'light') {
+            theme = savedTheme;
+          }
+        } catch {
+          // Если localStorage недоступен, используем светлую тему по умолчанию.
+        }
+
+        const root = document.documentElement;
+        root.dataset.theme = theme;
+        root.style.colorScheme = theme;
+      })();
+    </script>
+    <style>
+      /* Критические стили: фон корректной темы виден ещё до загрузки React и основного CSS. */
+      :root {
+        color-scheme: light;
+        background-color: #f5f6fa;
+      }
+
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        background-color: #151622;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background-color: #f5f6fa;
+      }
+
+      :root[data-theme="dark"] body {
+        background-color: #151622;
+      }
+    </style>
     <meta name="theme-color" content="#6657e8" />
     <meta name="description" content="Каталог услуг, корзина и система скидок Service Studio." />
     <title>Service Studio — каталог услуг</title>

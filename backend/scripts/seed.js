@@ -8,7 +8,7 @@ async function seed() {
 
   await pool.query(`INSERT INTO Roles (role_name) VALUES ('admin'), ('customer') ON CONFLICT (role_name) DO NOTHING`)
 
-  const categories = ['Маникюр и ногти', 'Уход за лицом', 'Массаж', 'Консультации']
+  const categories = ['Без категории', 'Маникюр и ногти', 'Уход за лицом', 'Массаж', 'Консультации']
   for (const name of categories) {
     await pool.query('INSERT INTO Categories (name) VALUES ($1) ON CONFLICT (name) DO NOTHING', [name])
   }
@@ -17,15 +17,15 @@ async function seed() {
   const customerRole = await pool.query("SELECT role_id FROM Roles WHERE role_name = 'customer'")
 
   await pool.query(
-    `INSERT INTO Users (role_id, full_name, email, password_hash)
-     VALUES ($1, 'Администратор', 'admin@demo.ru', $2)
-     ON CONFLICT (email) DO UPDATE SET role_id = EXCLUDED.role_id, password_hash = EXCLUDED.password_hash`,
+    `INSERT INTO Users (role_id, full_name, email, password_hash, phone)
+     VALUES ($1, 'Администратор', 'admin@demo.ru', $2, '+7 900 000-00-01')
+     ON CONFLICT (email) DO UPDATE SET role_id = EXCLUDED.role_id, password_hash = EXCLUDED.password_hash, phone = EXCLUDED.phone`,
     [adminRole.rows[0].role_id, adminHash],
   )
   await pool.query(
-    `INSERT INTO Users (role_id, full_name, email, password_hash)
-     VALUES ($1, 'Демо-пользователь', 'client@demo.ru', $2)
-     ON CONFLICT (email) DO UPDATE SET role_id = EXCLUDED.role_id, password_hash = EXCLUDED.password_hash`,
+    `INSERT INTO Users (role_id, full_name, email, password_hash, phone)
+     VALUES ($1, 'Демо-пользователь', 'client@demo.ru', $2, '+7 900 000-00-02')
+     ON CONFLICT (email) DO UPDATE SET role_id = EXCLUDED.role_id, password_hash = EXCLUDED.password_hash, phone = EXCLUDED.phone`,
     [customerRole.rows[0].role_id, clientHash],
   )
 
